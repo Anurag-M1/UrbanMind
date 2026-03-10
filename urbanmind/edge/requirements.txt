@@ -1,0 +1,9 @@
+ultralytics==8.2.0
+opencv-python-headless==4.9.0.80
+numpy==1.26.4
+paho-mqtt==2.0.0
+sounddevice==0.4.6
+librosa==0.10.2
+torch==2.3.0
+torchvision==0.18.0
+python-dotenv==1.0.1

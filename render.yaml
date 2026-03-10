@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: urbanmind-backend
+    runtime: python
+    rootDir: urbanmind
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: BACKEND_CORS_ORIGINS
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: urbanmind-cache
+          property: connectionString
+      - key: MQTT_HOST
+        sync: false
+      - key: MQTT_PORT
+        value: 1883
+      - key: INTERSECTION_LOCATIONS_JSON
+        value: "{}"
+      - key: LOG_LEVEL
+        value: INFO
+
+  - type: web
+    name: urbanmind-frontend
+    runtime: static
+    rootDir: urbanmind/frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: urbanmind/frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false
+      - key: VITE_WS_URL
+        sync: false
+      - key: VITE_LIVE_TRANSPORT
+        value: websocket
+      - key: VITE_POLL_INTERVAL_MS
+        value: 5000
+      - key: VITE_CITY_CENTER_LAT
+        value: 28.6139
+      - key: VITE_CITY_CENTER_LON
+        value: 77.2090
+
+  - type: keyvalue
+    name: urbanmind-cache
+    ipAllowList: []
+    plan: free
+    maxmemoryPolicy: allkeys-lru
