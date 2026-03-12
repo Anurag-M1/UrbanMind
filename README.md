@@ -195,26 +195,65 @@ Important routes in the FastAPI backend:
 
 ## Deployment
 
-The repo already contains deployment configs for both Render and Vercel:
+Recommended deployment paths for this architecture are AWS-based:
 
-- `render.yaml`
-- `urbanmind/vercel.json`
-- `urbanmind/frontend/vercel.json`
+### Option 1: AWS production deployment
 
-Recommended deployment paths:
+This is the best fit when you want the current backend WebSocket behaviour and a
+scalable city-control deployment.
 
-1. `Frontend on Vercel + Backend on Render`
-   Best split when you want the existing backend WebSocket behaviour.
-2. `Frontend and Backend on Render`
-   Simplest full-stack deployment for the current architecture.
-3. `Frontend and Backend on Vercel`
-   Supported in polling mode for the dashboard.
+- `Frontend`
+  Deploy `urbanmind/frontend` on AWS Amplify Hosting or on S3 + CloudFront as a
+  static React site.
+- `Backend`
+  Deploy `urbanmind/backend` as a containerised FastAPI service on ECS Fargate
+  behind an Application Load Balancer so HTTPS and WebSocket traffic can reach
+  `/ws/live`.
+- `State store`
+  Use Amazon ElastiCache for Redis for `REDIS_URL`.
+- `MQTT broker`
+  Use a managed MQTT-compatible broker or a Mosquitto broker on EC2, depending
+  on your integration preference and pilot size.
+- `Edge nodes`
+  Keep the edge runtime on Jetson Nano / Raspberry Pi / on-prem hardware near
+  the intersections and point them to the cloud MQTT/backend endpoints.
 
-Related env templates:
+Recommended frontend environment variables:
 
+- `VITE_API_BASE_URL=https://api.your-domain.com`
+- `VITE_WS_URL=wss://api.your-domain.com/ws/live`
+- `VITE_LIVE_TRANSPORT=websocket`
+
+Recommended backend environment variables:
+
+- `BACKEND_CORS_ORIGINS=https://dashboard.your-domain.com`
+- `REDIS_URL=redis://<host>:6379`
+- `MQTT_HOST=<broker-host>`
+- `MQTT_PORT=1883`
+- `INTERSECTION_LOCATIONS_JSON={...}`
+- `LOG_LEVEL=INFO`
+
+### Option 2: Suitable pilot deployment on AWS EC2
+
+If you want a lower-complexity demo or pilot rollout, use one EC2 instance for
+core services and keep the frontend separate as static hosting.
+
+- run Redis, MQTT, and backend on EC2 using Docker
+- use the existing `urbanmind/backend/Dockerfile`
+- use `urbanmind/docker-compose.yml` as the starting point for Redis, MQTT, and backend
+- build the frontend from `urbanmind/frontend` and host it on Amplify, S3 + CloudFront, or Nginx
+- point the frontend to the EC2 public API/WebSocket URL
+
+This is suitable for college demos, pilot intersections, and internal testing.
+
+### Deployment-ready project files
+
+- `urbanmind/backend/Dockerfile`
+- `urbanmind/docker-compose.yml`
 - `urbanmind/backend/.env.example`
 - `urbanmind/frontend/.env.example`
 - `urbanmind/.env.example`
+- `.python-version`
 
 ## Why This Repo Has Two Code Paths
 
