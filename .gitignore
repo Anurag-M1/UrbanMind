@@ -13,3 +13,8 @@ data/
 .pytest_cache/
 .mypy_cache/
 frontend/.vite/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+frontend/tailwind.config.js
+frontend/tailwind.config.d.ts
