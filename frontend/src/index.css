@@ -1,0 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --um-bg: #020c18;
+  --um-surface: #0a1628;
+  --um-border: #0d2035;
+  --um-cyan: #00d9ff;
+  --um-green: #00ff88;
+  --um-red: #ff3355;
+  --um-amber: #ffcc00;
+  --um-purple: #aa55ff;
+  --um-text: #c8dde8;
+  --um-muted: #4a6878;
+}
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply m-0 bg-um-bg font-body text-um-text antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(0, 217, 255, 0.12), transparent 32%),
+      radial-gradient(circle at top right, rgba(170, 85, 255, 0.08), transparent 28%),
+      linear-gradient(180deg, rgba(13, 32, 53, 0.65), rgba(2, 12, 24, 1));
+  }
+
+  button,
+  input,
+  select {
+    @apply font-body;
+  }
+}
+
+.leaflet-container {
+  background: #020c18;
+}

@@ -1,0 +1,5 @@
+{
+  "duration_seconds": 7200,
+  "description": "Two-hour Bhilai-Durg rush hour demo with heavy adaptive-signal demand.",
+  "trigger_emergency_demo": true
+}

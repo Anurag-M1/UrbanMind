@@ -1,0 +1,35 @@
+{
+  "name": "emergency_priority",
+  "description": "Demonstrates emergency vehicle pre-emption forcing green corridors.",
+  "duration_seconds": 1800,
+  "intersections": [
+    {
+      "id": "indiranagar_100ft",
+      "base_flow_ew": 40,
+      "base_flow_ns": 40,
+      "variance": 10,
+      "events": []
+    },
+    {
+      "id": "koramangala_sony",
+      "base_flow_ew": 60,
+      "base_flow_ns": 60,
+      "variance": 15,
+      "events": []
+    },
+    {
+      "id": "mg_road_brigade",
+      "base_flow_ew": 50,
+      "base_flow_ns": 50,
+      "variance": 10,
+      "events": []
+    },
+    {
+      "id": "hsr_layout_bdam",
+      "base_flow_ew": 45,
+      "base_flow_ns": 45,
+      "variance": 10,
+      "events": []
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "morning_rush",
+  "description": "Heavy inbound traffic towards the city center.",
+  "duration_seconds": 3600,
+  "intersections": [
+    {
+      "id": "indiranagar_100ft",
+      "base_flow_ew": 50,
+      "base_flow_ns": 120,
+      "variance": 20,
+      "events": [
+        {
+          "time": 300,
+          "type": "surge",
+          "target_lane": "ns",
+          "multiplier": 2.5,
+          "duration": 600
+        }
+      ]
+    },
+    {
+      "id": "koramangala_sony",
+      "base_flow_ew": 80,
+      "base_flow_ns": 90,
+      "variance": 15,
+      "events": []
+    },
+    {
+      "id": "mg_road_brigade",
+      "base_flow_ew": 150,
+      "base_flow_ns": 60,
+      "variance": 30,
+      "events": [
+        {
+          "time": 900,
+          "type": "accident",
+          "target_lane": "ew",
+          "multiplier": 0.1,
+          "duration": 1200
+        }
+      ]
+    },
+    {
+      "id": "hsr_layout_bdam",
+      "base_flow_ew": 70,
+      "base_flow_ns": 110,
+      "variance": 20,
+      "events": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[
+  { "lat": 21.1900, "lng": 81.3740, "speed": 60, "heading": 42 },
+  { "lat": 21.1907, "lng": 81.3747, "speed": 60, "heading": 42 },
+  { "lat": 21.1914, "lng": 81.3755, "speed": 60, "heading": 42 },
+  { "lat": 21.1921, "lng": 81.3762, "speed": 60, "heading": 42 },
+  { "lat": 21.1928, "lng": 81.3770, "speed": 60, "heading": 42 },
+  { "lat": 21.1935, "lng": 81.3778, "speed": 60, "heading": 42 },
+  { "lat": 21.1942, "lng": 81.3786, "speed": 60, "heading": 42 },
+  { "lat": 21.1950, "lng": 81.3794, "speed": 60, "heading": 42 },
+  { "lat": 21.1958, "lng": 81.3802, "speed": 60, "heading": 42 },
+  { "lat": 21.1966, "lng": 81.3810, "speed": 60, "heading": 42 },
+  { "lat": 21.1974, "lng": 81.3818, "speed": 60, "heading": 42 },
+  { "lat": 21.1982, "lng": 81.3826, "speed": 60, "heading": 42 },
+  { "lat": 21.1991, "lng": 81.3835, "speed": 60, "heading": 42 },
+  { "lat": 21.2000, "lng": 81.3844, "speed": 60, "heading": 42 }
+]
