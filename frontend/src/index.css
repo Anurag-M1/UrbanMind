@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Indian Flag / Government Official Palette */
+  --saffron: #FF9933;
+  --white: #FFFFFF;
+  --green: #138808;
+  --navy: #000080;
+  --ashok-blue: #000080;
+  --gov-bg: #f5f7fa;
+  --gov-sidebar: #ffffff;
+  --gov-card: #ffffff;
+  --gov-text: #0b1a30;
+  --gov-border: #d1d9e2;
+  
+  /* Design Tokens Mapping */
+  --background: var(--gov-bg);
+  --foreground: var(--gov-text);
+  --card: var(--gov-card);
+  --card-foreground: var(--gov-text);
+  --popover: var(--gov-card);
+  --popover-foreground: var(--gov-text);
+  --primary: var(--navy);
+  --primary-foreground: var(--white);
+  --secondary: var(--saffron);
+  --secondary-foreground: var(--white);
+  --muted: #e9ecef;
+  --muted-foreground: #6c757d;
+  --accent: var(--green);
+  --accent-foreground: var(--white);
+  --destructive: #dc3545;
+  --destructive-foreground: var(--white);
+  --border: var(--gov-border);
+  --input: var(--white);
+  --ring: var(--navy);
+  --radius: 0.25rem;
+}
+
+@layer base {
+  * {
+    @apply border-[#d1d9e2];
+  }
+  body {
+    @apply bg-[#f5f7fa] text-[#0b1a30];
+    background-image: none;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  /* Professional Administrative Classes */
+  .gov-panel {
+    @apply bg-white border border-[#d1d9e2] shadow-sm;
+  }
+
+  .gov-header {
+    @apply bg-navy text-white font-black uppercase tracking-widest;
+  }
+
+  /* Main Button Control */
+  .btn {
+    @apply flex items-center gap-2 px-5 py-2.5 rounded font-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-[10px] border shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-navy text-white border-navy hover:bg-navy/90 hover:shadow-md active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-white text-navy border-[#d1d9e2] hover:bg-gray-50 hover:border-navy/20;
+  }
+
+  .btn-danger {
+    @apply bg-[#dc3545] text-white border-[#c82333] hover:bg-[#c82333] hover:shadow-md;
+  }
+
+  .btn-success {
+    @apply bg-[#138808] text-white border-[#0f6b06] hover:bg-[#0f6b06] hover:shadow-md;
+  }
+
+  /* Specialized Overlays */
+  .scanline-overlay {
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.05) 50%
+    );
+    background-size: 100% 2px;
+    pointer-events: none;
+  }
+
+  /* Animations for official status */
+  @keyframes status-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+  }
+
+  .animate-status {
+    animation: status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes emergency-pulse {
+    0% { border-color: rgba(220, 38, 38, 0.2); background-color: rgba(220, 38, 38, 0.05); }
+    50% { border-color: rgba(220, 38, 38, 0.5); background-color: rgba(220, 38, 38, 0.15); }
+    100% { border-color: rgba(220, 38, 38, 0.2); background-color: rgba(220, 38, 38, 0.05); }
+  }
+}
+
+/* Localized Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f3f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccd0d4;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b1b5b9;
+}

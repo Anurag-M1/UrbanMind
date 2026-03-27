@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+venv/
+.venv/
+**/venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Large Binaries (exceeding 50MB)
+# frontend/public/fire_truck.glb
+
+
+# Testing
+coverage/
+
+# Production
+dist/
+build/
+
+# Misc
+.DS_Store
+*.pem
+*.log
+nohup.out
+dump.rdb
+
+# Frontend
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vercel
+.next/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project Specific
+frontend/tsconfig.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
+frontend/vite.config.d.ts
+backend/uploads/
+Test Video.mp4

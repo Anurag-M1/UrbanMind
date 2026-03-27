@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./backend
+    ports: ["8000:8000"]
+    depends_on: [redis, mqtt]
+    env_file: .env
+    volumes:
+      - ./backend:/app
+      - video_uploads:/app/uploads
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    volumes: ["redis_data:/data"]
+    command: redis-server --appendonly yes
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    ports: ["1883:1883", "9001:9001"]
+    volumes: ["./mosquitto.conf:/mosquitto/config/mosquitto.conf"]
+
+  frontend:
+    build: ./frontend
+    ports: ["3000:80"]
+    depends_on: [api]
+
+volumes:
+  redis_data: {}
+  video_uploads: {}
