@@ -1,6 +1,6 @@
 # UrbanMind
 
-UrbanMind is a realtime urban traffic intelligence platform built for hackathon demos, operator-facing command workflows, and AI-assisted mobility storytelling. It combines adaptive signal control, YOLO-based vision analysis, emergency green-corridor automation, live multi-node footage, and a responsive 3D digital twin into one coordinated system.
+UrbanMind is a realtime urban traffic intelligence platform built for hackathon demos, operator-facing command workflows, and AI-assisted mobility storytelling. It combines adaptive signal control, YOLO-based vision analysis, emergency green-corridor automation, live multi-node footage, GPS-aware emergency tracking, congestion rerouting guidance, and responsive digital twin and admin experiences into one coordinated system.
 
 ## What It Does
 
@@ -10,7 +10,9 @@ UrbanMind is a realtime urban traffic intelligence platform built for hackathon 
 - Maintains a live vision telemetry stream for total vehicle detection and system-wide dashboard KPIs
 - Auto-triggers Emergency Ops when ambulance, police, or fire vehicles are inferred from live detection
 - Adds siren-aware escalation signals into the administrative log and emergency activation flow
+- Tracks emergency units with live GPS trails, route status, congestion hotspots, and alternate-corridor recommendations
 - Visualizes the city network in a responsive Digital Twin experience
+- Includes responsive Settings, Manual Vision, Emergency Ops, ROI, and Digital Twin pages for presentation-ready demos
 
 ## Current Demo Scope
 
@@ -54,6 +56,13 @@ The seeded demo network contains 9 Delhi traffic sectors:
 - Manual dispatch for ambulance, fire, and police
 - Vision-triggered and siren-confirmed corridor activation
 - GPS route playback and corridor progress
+- Congestion hotspot detection on the active corridor
+- Alternate route and reroute recommendation when upcoming sectors are congested
+
+### Settings
+
+- Responsive admin configuration page
+- Visualization, AI protocol, audit, and project-credit panels
 
 ### Traffic Analytics
 
@@ -108,6 +117,20 @@ flowchart LR
    - recommended signal timings
    - YOLO evidence frames
 6. Operators can apply the recommended timings to the mapped intersection.
+
+## Emergency Tracking Workflow
+
+1. An emergency unit is dispatched manually or activated from live detection.
+2. The backend assigns a primary corridor across the mapped sectors.
+3. GPS position updates stream over the websocket to the frontend.
+4. The emergency page renders live unit position, corridor progress, GPS trail history, and ETA.
+5. Upcoming intersections are evaluated for congestion risk.
+6. If the active corridor becomes congested, the system generates:
+   - route status
+   - congestion hotspots
+   - reroute recommendation
+   - alternate corridor intersections
+7. The map overlays both the primary route and the alternate route for operators.
 
 ## Tech Stack
 
@@ -204,6 +227,7 @@ docker compose up --build
 - Simulates ambulance, fire, and police routes
 - Activates green corridors across selected intersections
 - Streams position updates to the frontend
+- Computes congestion-aware reroute guidance and alternate corridor recommendations per active vehicle
 
 ### Video Processor
 

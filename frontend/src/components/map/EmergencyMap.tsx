@@ -134,17 +134,32 @@ export function EmergencyMap({ activeVehicles }: EmergencyMapProps) {
         {activeVehicles.map(v => {
           if (v.lat === undefined || v.lng === undefined) return null;
           const vPos: [number, number] = [v.lat, v.lng];
+          const gpsTrail = (v.gps_history || [])
+            .filter((point) => typeof point.lat === 'number' && typeof point.lng === 'number')
+            .map((point) => [point.lat, point.lng] as [number, number]);
           
           // Draw a line from vehicle to upcoming intersections
           const upcomingPoints = (v.corridor_intersections || [])
             .slice(v.current_intersection_idx || 0)
             .map(id => INTERSECTION_COORDS[id])
             .filter(Boolean);
+          const alternatePoints = (v.alternate_corridor_intersections || [])
+            .map(id => INTERSECTION_COORDS[id])
+            .filter(Boolean);
             
           const routePoints = [vPos, ...upcomingPoints];
+          const alternateRoutePoints = [vPos, ...alternatePoints];
 
           return (
             <Fragment key={v.id}>
+              {gpsTrail.length > 1 && (
+                <Polyline
+                  positions={gpsTrail}
+                  color="#00ccff"
+                  weight={3}
+                  opacity={0.7}
+                />
+              )}
               {/* Highlight active corridor route */}
               {routePoints.length > 1 && (
                 <Polyline 
@@ -156,6 +171,15 @@ export function EmergencyMap({ activeVehicles }: EmergencyMapProps) {
                   className="animate-pulse"
                 />
               )}
+              {alternateRoutePoints.length > 1 && (
+                <Polyline
+                  positions={alternateRoutePoints}
+                  color="#ffaa00"
+                  weight={3}
+                  opacity={0.8}
+                  dashArray="8, 8"
+                />
+              )}
               
               <Marker position={vPos} icon={getVehicleIcon(v.type)} zIndexOffset={1000}>
                 <Popup className="custom-popup">
@@ -165,6 +189,14 @@ export function EmergencyMap({ activeVehicles }: EmergencyMapProps) {
                     Speed: {Math.round(v.speed_kmh)} km/h
                     <br />
                     ETA: {Math.round(v.eta_seconds)}s
+                    <br />
+                    Route: {v.route_status || 'Primary Corridor Stable'}
+                    {v.reroute_recommendation ? (
+                      <>
+                        <br />
+                        Advisory: {v.reroute_recommendation}
+                      </>
+                    ) : null}
                   </div>
                 </Popup>
               </Marker>

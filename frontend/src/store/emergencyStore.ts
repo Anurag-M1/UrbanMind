@@ -8,7 +8,14 @@ interface EmergencyStore {
   setActiveVehicles: (vehicles: EmergencyVehicle[]) => void;
   addVehicle: (vehicle: EmergencyVehicle) => void;
   removeVehicle: (id: string) => void;
-  updateVehiclePosition: (id: string, lat: number, lng: number, speed: number, heading: number) => void;
+  updateVehiclePosition: (
+    id: string,
+    lat: number,
+    lng: number,
+    speed: number,
+    heading: number,
+    extras?: Partial<EmergencyVehicle>
+  ) => void;
   setEvents: (events: EmergencyEvent[]) => void;
   addEvent: (event: EmergencyEvent) => void;
   setCorridorMessage: (message: string | null) => void;
@@ -31,10 +38,10 @@ export const useEmergencyStore = create<EmergencyStore>((set, get) => ({
       activeVehicles: state.activeVehicles.filter((v) => v.id !== id),
     })),
 
-  updateVehiclePosition: (id, lat, lng, speed, heading) =>
+  updateVehiclePosition: (id, lat, lng, speed, heading, extras = {}) =>
     set((state) => ({
       activeVehicles: state.activeVehicles.map((v) =>
-        v.id === id ? { ...v, lat, lng, speed_kmh: speed, heading_degrees: heading } : v
+        v.id === id ? { ...v, lat, lng, speed_kmh: speed, heading_degrees: heading, ...extras } : v
       ),
     })),
 

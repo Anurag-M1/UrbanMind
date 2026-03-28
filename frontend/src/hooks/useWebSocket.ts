@@ -226,7 +226,15 @@ export function useWebSocket() {
               data.lat,
               data.lng,
               data.speed_kmh ?? 0,
-              data.heading ?? 0
+              data.heading ?? 0,
+              {
+                eta_seconds: data.eta_seconds,
+                route_status: data.route_status,
+                reroute_recommendation: data.reroute_recommendation,
+                alternate_corridor_intersections: data.alternate_corridor_intersections ?? [],
+                congestion_hotspots: data.congestion_hotspots ?? [],
+                gps_history: data.gps_history ?? [],
+              }
             );
           }
           break;

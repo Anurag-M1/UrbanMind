@@ -73,6 +73,9 @@ export function DispatchPanel({ activeVehicles, onDispatch }: DispatchPanelProps
 
 export function CorridorTracker({ vehicle }: { vehicle: EmergencyVehicle }) {
   const intersections = Array.isArray(vehicle.corridor_intersections) ? vehicle.corridor_intersections : [];
+  const alternateCorridor = Array.isArray(vehicle.alternate_corridor_intersections) ? vehicle.alternate_corridor_intersections : [];
+  const congestionHotspots = Array.isArray(vehicle.congestion_hotspots) ? vehicle.congestion_hotspots : [];
+  const gpsHistory = Array.isArray(vehicle.gps_history) ? vehicle.gps_history : [];
   const currentIdx = vehicle.current_intersection_idx || 0;
   const progress = intersections.length > 0
     ? (currentIdx / intersections.length) * 100
@@ -101,6 +104,12 @@ export function CorridorTracker({ vehicle }: { vehicle: EmergencyVehicle }) {
               : 'Destination Reached'}
           </span>
         </div>
+        <div className="col-span-2 mt-1">
+          <span className="text-muted block text-[10px] uppercase">GPS Tracking Status</span>
+          <span className={`font-mono text-sm ${vehicle.route_status === 'Reroute Advised' ? 'text-amber' : 'text-green'}`}>
+            {vehicle.route_status || 'Primary Corridor Stable'}
+          </span>
+        </div>
       </div>
 
       <div className="mb-2">
@@ -126,6 +135,37 @@ export function CorridorTracker({ vehicle }: { vehicle: EmergencyVehicle }) {
             {i < currentIdx ? '✓' : '●'} {id}
           </span>
         ))}
+      </div>
+
+      <div className="mt-3 space-y-2 rounded border border-white/10 bg-black/20 p-3">
+        <div>
+          <span className="text-muted block text-[10px] uppercase">Congestion Hotspots</span>
+          <span className="font-mono text-xs text-amber">
+            {congestionHotspots.length > 0 ? congestionHotspots.join(' • ') : 'No critical congestion on current corridor'}
+          </span>
+        </div>
+        <div>
+          <span className="text-muted block text-[10px] uppercase">Reroute / Alternate Option</span>
+          <span className="text-xs leading-5 text-text/90">
+            {vehicle.reroute_recommendation || 'Primary route remains the fastest emergency path.'}
+          </span>
+        </div>
+        {alternateCorridor.length > 0 && (
+          <div>
+            <span className="text-muted block text-[10px] uppercase">Alternate Corridor</span>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {alternateCorridor.map((id) => (
+                <span key={`${vehicle.id}-${id}`} className="rounded bg-amber/15 px-1.5 py-0.5 text-[10px] font-mono text-amber">
+                  ALT {id}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        <div>
+          <span className="text-muted block text-[10px] uppercase">GPS Points Recorded</span>
+          <span className="font-mono text-xs text-cyan">{gpsHistory.length}</span>
+        </div>
       </div>
     </div>
   );

@@ -19,13 +19,19 @@ export default function Emergency() {
         setEvents(evts);
         const { active } = await getActiveEmergencies();
         if (Array.isArray(active) && active.length > 0) {
-          const validated = active.map(v => ({
+          const validated = active.map((entry) => {
+            const v = entry?.vehicle ?? entry;
+            return {
             ...v,
             corridor_intersections: Array.isArray(v.corridor_intersections) ? v.corridor_intersections : [],
+            alternate_corridor_intersections: Array.isArray(v.alternate_corridor_intersections) ? v.alternate_corridor_intersections : [],
+            congestion_hotspots: Array.isArray(v.congestion_hotspots) ? v.congestion_hotspots : [],
+            gps_history: Array.isArray(v.gps_history) ? v.gps_history : [],
             current_intersection_idx: v.current_intersection_idx ?? 0,
             lat: typeof v.lat === 'number' ? v.lat : 28.6139,
             lng: typeof v.lng === 'number' ? v.lng : 77.2090
-          })).filter(v => v.id);
+          };
+          }).filter(v => v.id);
           setActiveVehicles(validated);
         }
       } catch { /* ignore */ }

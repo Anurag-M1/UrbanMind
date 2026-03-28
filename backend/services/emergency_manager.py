@@ -79,6 +79,64 @@ class EmergencyManager:
         self.MAX_ACTIVE = 2
         self._tasks: Dict[str, asyncio.Task[None]] = {}
 
+    async def _build_route_guidance(
+        self,
+        vehicle: EmergencyVehicle,
+        state_manager: Any,
+    ) -> Dict[str, Any]:
+        upcoming_ids = vehicle.corridor_intersections[vehicle.current_intersection_idx:]
+        hotspots: List[tuple[float, str]] = []
+
+        for int_id in upcoming_ids:
+            state = await state_manager.get_intersection(int_id)
+            if not state:
+                continue
+            load_score = float(state.wait_time_avg) + float(state.density_ew) + float(state.density_ns)
+            if state.fault or state.wait_time_avg >= 28 or (state.density_ew + state.density_ns) >= 70:
+                hotspots.append((load_score, int_id))
+
+        hotspot_ids = [int_id for _, int_id in sorted(hotspots, reverse=True)]
+
+        if not hotspot_ids:
+            return {
+                "route_status": "Primary Corridor Stable",
+                "reroute_recommendation": "Primary emergency corridor is clear. Maintain current tactical route.",
+                "alternate_corridor_intersections": [],
+                "congestion_hotspots": [],
+            }
+
+        destination_id = vehicle.corridor_intersections[-1] if vehicle.corridor_intersections else None
+        destination_coords = INTERSECTION_COORDS.get(destination_id, INTERSECTION_COORDS.get("int_002", (28.6273, 77.2348)))
+        candidates: List[tuple[float, str]] = []
+
+        for int_id, (lat, lng) in INTERSECTION_COORDS.items():
+            if int_id in vehicle.corridor_intersections:
+                continue
+            state = await state_manager.get_intersection(int_id)
+            if not state:
+                continue
+            score = (
+                float(state.wait_time_avg) * 1.3
+                + float(state.density_ew + state.density_ns)
+                + (35 if state.fault else 0)
+                + haversine_distance(lat, lng, destination_coords[0], destination_coords[1]) / 110
+            )
+            candidates.append((score, int_id))
+
+        alternates = [int_id for _, int_id in sorted(candidates)[:2]]
+        hotspot_label = ", ".join(hotspot_ids[:2]).upper()
+        alternate_label = " -> ".join(alternates).upper() if alternates else "NO LOW-CONGESTION ALTERNATE AVAILABLE"
+
+        return {
+            "route_status": "Reroute Advised",
+            "reroute_recommendation": (
+                f"Congestion detected near {hotspot_label}. "
+                f"Suggested alternate priority path: {alternate_label}."
+            ),
+            "alternate_corridor_intersections": alternates,
+            "congestion_hotspots": hotspot_ids[:3],
+        }
+
     def _find_corridor_intersections(
         self, track: List[Dict[str, Any]], max_count: int = 5
     ) -> List[str]:
@@ -152,6 +210,13 @@ class EmergencyManager:
             current_intersection_idx=0,
             eta_seconds=len(track),
         )
+        vehicle.gps_history = [{"lat": vehicle.lat, "lng": vehicle.lng}]
+
+        route_guidance = await self._build_route_guidance(vehicle, state_manager)
+        vehicle.route_status = route_guidance["route_status"]
+        vehicle.reroute_recommendation = route_guidance["reroute_recommendation"]
+        vehicle.alternate_corridor_intersections = route_guidance["alternate_corridor_intersections"]
+        vehicle.congestion_hotspots = route_guidance["congestion_hotspots"]
 
         self.active_vehicles[vehicle_id] = vehicle
         self.priority_queue.append(vehicle_id)
@@ -232,6 +297,10 @@ class EmergencyManager:
                     f"{len(intersection_ids)} signal green corridor activated. "
                     f"800m pre-emption in effect."
                 ),
+                "route_status": vehicle.route_status,
+                "reroute_recommendation": vehicle.reroute_recommendation,
+                "alternate_corridor_intersections": vehicle.alternate_corridor_intersections,
+                "congestion_hotspots": vehicle.congestion_hotspots,
             })
 
     async def _stream_gps(
@@ -258,6 +327,13 @@ class EmergencyManager:
                 vehicle.speed_kmh = waypoint["speed_kmh"]
                 vehicle.heading_degrees = waypoint["heading"]
                 vehicle.eta_seconds = max(0, len(track) - i - 1)
+                vehicle.gps_history = [*vehicle.gps_history[-19:], {"lat": vehicle.lat, "lng": vehicle.lng}]
+
+                route_guidance = await self._build_route_guidance(vehicle, state_manager)
+                vehicle.route_status = route_guidance["route_status"]
+                vehicle.reroute_recommendation = route_guidance["reroute_recommendation"]
+                vehicle.alternate_corridor_intersections = route_guidance["alternate_corridor_intersections"]
+                vehicle.congestion_hotspots = route_guidance["congestion_hotspots"]
 
                 # Check if near any corridor intersection
                 for j, int_id in enumerate(vehicle.corridor_intersections):
@@ -285,6 +361,11 @@ class EmergencyManager:
                         "speed_kmh": vehicle.speed_kmh,
                         "heading": vehicle.heading_degrees,
                         "eta_seconds": vehicle.eta_seconds,
+                        "route_status": vehicle.route_status,
+                        "reroute_recommendation": vehicle.reroute_recommendation,
+                        "alternate_corridor_intersections": vehicle.alternate_corridor_intersections,
+                        "congestion_hotspots": vehicle.congestion_hotspots,
+                        "gps_history": vehicle.gps_history,
                         "corridor_progress": (
                             f"{vehicle.current_intersection_idx}/"
                             f"{len(vehicle.corridor_intersections)} "

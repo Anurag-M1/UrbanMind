@@ -84,6 +84,11 @@ export interface EmergencyVehicle {
   corridor_intersections: string[];
   current_intersection_idx: number;
   eta_seconds: number;
+  route_status?: string;
+  reroute_recommendation?: string;
+  alternate_corridor_intersections?: string[];
+  congestion_hotspots?: string[];
+  gps_history?: Array<{ lat: number; lng: number }>;
 }
 
 export interface EmergencyEvent {
@@ -130,6 +135,11 @@ export interface WSMessage {
   heading?: number;
   eta_seconds?: number;
   corridor_progress?: string;
+  route_status?: string;
+  reroute_recommendation?: string;
+  alternate_corridor_intersections?: string[];
+  congestion_hotspots?: string[];
+  gps_history?: Array<{ lat: number; lng: number }>;
   intersection_id?: string;
   trigger_source?: string;
   status?: string;
