@@ -41,6 +41,20 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error("✗ Redis connection failed: %s", e)
 
+    # 1.25 Seed demo intersections on fresh deployments
+    if settings.DEMO_MODE:
+        try:
+            intersections = await state_manager.get_all_intersections()
+            if not intersections:
+                from scripts_seed import seed_intersections
+
+                await seed_intersections(state_manager)
+                logger.info("✓ Demo intersections seeded")
+            else:
+                logger.info("✓ Demo intersections already present (%d)", len(intersections))
+        except Exception as e:
+            logger.error("✗ Demo intersection seeding failed: %s", e)
+
     # 1.5 Start Live Vision Processor
     try:
         await live_processor.start()
