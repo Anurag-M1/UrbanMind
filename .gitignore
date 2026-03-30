@@ -51,3 +51,4 @@ frontend/tsconfig.node.tsbuildinfo
 frontend/vite.config.d.ts
 backend/uploads/
 Test Video.mp4
+Demo.mov
