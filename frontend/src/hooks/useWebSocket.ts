@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { useTrafficStore } from '../lib/store';
 import { useEmergencyStore } from '../store/emergencyStore';
 import type { WSMessage } from '../types';
-import { WS_DASHBOARD_URL } from '../lib/runtime-config';
+import { WS_DASHBOARD_URL, buildApiUrl } from '../lib/runtime-config';
 
 const RECONNECT_DELAY = 2000;
 const MAX_RECONNECT_DELAY = 30000;
@@ -25,6 +25,8 @@ export function useWebSocket() {
   const [reconnecting, setReconnecting] = useState(false);
 
   const syncRealtimeState = useTrafficStore((s) => s.syncRealtimeState);
+  const setIntersectionsFromBackend = useTrafficStore((s) => s.setIntersectionsFromBackend);
+  const setSystemMetricsFromBackend = useTrafficStore((s) => s.setSystemMetricsFromBackend);
   const updateSystemStatus = useTrafficStore((s) => s.updateSystemStatus);
   const addEvent = useTrafficStore((s) => s.addEvent);
   const clearOldEvents = useTrafficStore((s) => s.clearOldEvents);
@@ -33,6 +35,46 @@ export function useWebSocket() {
   const updateVehiclePosition = useEmergencyStore((s) => s.updateVehiclePosition);
   const setCorridorMessage = useEmergencyStore((s) => s.setCorridorMessage);
   const setActiveVehicles = useEmergencyStore((s) => s.setActiveVehicles);
+
+  const hydrateFromHttp = useCallback(async () => {
+    try {
+      const [signalsRes, summaryRes, emergencyRes] = await Promise.all([
+        fetch(buildApiUrl('/api/v1/signals/')),
+        fetch(buildApiUrl('/api/v1/analytics/summary')),
+        fetch(buildApiUrl('/api/v1/emergency/active')),
+      ]);
+
+      if (signalsRes.ok) {
+        const signalsData = await signalsRes.json();
+        if (Array.isArray(signalsData.intersections) && signalsData.intersections.length) {
+          setIntersectionsFromBackend(signalsData.intersections);
+        }
+      }
+
+      if (summaryRes.ok) {
+        const summary = await summaryRes.json();
+        const activePayload = emergencyRes.ok ? await emergencyRes.json() : { count: 0, active: [] };
+
+        setSystemMetricsFromBackend({
+          total_vehicles: Math.round(summary.total_vehicles_processed ?? 0),
+          network_avg_wait: Math.round(summary.network_avg_wait_seconds ?? 0),
+          webster_countdown: 0,
+          active_emergencies: Math.round(activePayload.count ?? 0),
+          emissions_saved_pct: Math.round(summary.emissions_saved_pct ?? 0),
+          uptime_seconds: Math.round((summary.uptime_hours ?? 0) * 3600),
+          webster_recalculations: Math.round(summary.webster_recalculations_today ?? 0),
+          live_vision_status: 'HTTP Sync Active',
+          last_detection_count: 0,
+        });
+
+        if (Array.isArray(activePayload.active)) {
+          setActiveVehicles(activePayload.active);
+        }
+      }
+    } catch {
+      // Ignore bootstrap failures and allow the websocket reconnect loop to continue
+    }
+  }, [setActiveVehicles, setIntersectionsFromBackend, setSystemMetricsFromBackend]);
 
   const emitEvent = useCallback(
     (
@@ -329,6 +371,7 @@ export function useWebSocket() {
   }, [handleMessage, emitEvent, updateSystemStatus]);
 
   useEffect(() => {
+    hydrateFromHttp();
     connect();
     // Ping every 20s
     const pingInterval = setInterval(() => {
@@ -336,13 +379,19 @@ export function useWebSocket() {
         wsRef.current.send('ping');
       }
     }, 20000);
+    const bootstrapInterval = setInterval(() => {
+      if (wsRef.current?.readyState !== WebSocket.OPEN) {
+        hydrateFromHttp();
+      }
+    }, 10000);
 
     return () => {
       clearInterval(pingInterval);
+      clearInterval(bootstrapInterval);
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
       wsRef.current?.close();
     };
-  }, [connect]);
+  }, [connect, hydrateFromHttp]);
 
   return { connected, reconnecting };
 }
