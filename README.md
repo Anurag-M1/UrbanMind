@@ -247,4 +247,4 @@ Detailed pitch and architecture documentation is available in [docs/HACKATHON_TE
 
 ## Credits
 
-Project credits: Anurag, Yash, Prakhar
+Project credits: Anurag Singh

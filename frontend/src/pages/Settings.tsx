@@ -150,15 +150,10 @@ export default function Settings() {
 
             <GovCard title="PROJECT CREDITS" accent="navy" className="p-5 sm:p-6">
               <div className="space-y-3">
-                {['Anurag', 'Yash', 'Prakhar'].map((member) => (
-                  <div
-                    key={member}
-                    className="flex flex-col gap-2 rounded border border-[#d1d9e2] bg-[#f8f9fa] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <span className="text-xs font-black uppercase tracking-[0.18em] text-navy">{member}</span>
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-green">Core Project Team</span>
-                  </div>
-                ))}
+                <div className="flex flex-col gap-2 rounded border border-[#d1d9e2] bg-[#f8f9fa] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="text-xs font-black uppercase tracking-[0.18em] text-navy">Anurag Singh</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-green">Project Lead</span>
+                </div>
               </div>
             </GovCard>
 
