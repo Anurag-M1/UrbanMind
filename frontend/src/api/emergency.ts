@@ -1,4 +1,6 @@
-const API_BASE = '/api/v1/emergency';
+import { buildApiUrl } from '../lib/runtime-config';
+
+const API_BASE = buildApiUrl('/api/v1/emergency');
 
 export async function simulateEmergency(vehicleType: string): Promise<{
   vehicle_id: string;
@@ -37,25 +39,25 @@ export async function getEmergencyHistory(): Promise<{ events: any[] }> {
 }
 
 export async function resetDemo(): Promise<{ reset: boolean }> {
-  const res = await fetch('/api/v1/demo/reset');
+  const res = await fetch(buildApiUrl('/api/v1/demo/reset'));
   if (!res.ok) throw new Error('Failed to reset demo');
   return res.json();
 }
 
 export async function getAnalyticsSummary(): Promise<any> {
-  const res = await fetch('/api/v1/analytics/summary');
+  const res = await fetch(buildApiUrl('/api/v1/analytics/summary'));
   if (!res.ok) throw new Error('Failed to get analytics summary');
   return res.json();
 }
 
 export async function getFlowSeries(): Promise<{ flow_series: any[] }> {
-  const res = await fetch('/api/v1/analytics/flow-series');
+  const res = await fetch(buildApiUrl('/api/v1/analytics/flow-series'));
   if (!res.ok) throw new Error('Failed to get flow series');
   return res.json();
 }
 
 export async function getWaitTimes(): Promise<{ wait_times: any[] }> {
-  const res = await fetch('/api/v1/analytics/wait-times');
+  const res = await fetch(buildApiUrl('/api/v1/analytics/wait-times'));
   if (!res.ok) throw new Error('Failed to get wait times');
   return res.json();
 }

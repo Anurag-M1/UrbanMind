@@ -1,6 +1,7 @@
 import type { VideoAnalysisResult } from '../types';
+import { buildApiUrl } from '../lib/runtime-config';
 
-const API_BASE = '/api/v1/video';
+const API_BASE = buildApiUrl('/api/v1/video');
 
 export async function uploadVideo(file: File, intersectionId: string = 'int_001'): Promise<{ video_id: string; status: string }> {
   const formData = new FormData();

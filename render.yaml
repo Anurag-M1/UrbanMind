@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: urbanmind-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: urbanmind-redis
+          property: connectionString
+      - key: MQTT_HOST
+        value: localhost
+      - key: MQTT_PORT
+        value: "1883"
+      - key: WEBSTER_INTERVAL
+        value: "10"
+      - key: CORRIDOR_LENGTH
+        value: "5"
+      - key: CONFIDENCE_THRESHOLD
+        value: "0.65"
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: MAX_VIDEO_SIZE_MB
+        value: "200"
+      - key: DEMO_MODE
+        value: "true"
+      - key: API_CORS_ORIGINS
+        sync: false
+
+  - type: redis
+    name: urbanmind-redis
+    plan: free
+    ipAllowList: []

@@ -2,8 +2,8 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { useTrafficStore } from '../lib/store';
 import { useEmergencyStore } from '../store/emergencyStore';
 import type { WSMessage } from '../types';
+import { WS_DASHBOARD_URL } from '../lib/runtime-config';
 
-const WS_URL = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.hostname}:8000/ws/dashboard`;
 const RECONNECT_DELAY = 2000;
 const MAX_RECONNECT_DELAY = 30000;
 const defaultCenter: [number, number] = [28.6139, 77.2090];
@@ -279,7 +279,7 @@ export function useWebSocket() {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
     try {
-      const ws = new WebSocket(WS_URL);
+      const ws = new WebSocket(WS_DASHBOARD_URL);
       wsRef.current = ws;
 
       ws.onopen = () => {
