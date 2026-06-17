@@ -68,7 +68,7 @@ export default function ROIPage() {
   );
 
   return (
-    <div className="min-h-full space-y-8 bg-[#f5f7fa] p-4 transition-all duration-700 sm:p-6 lg:p-8">
+    <div className="h-full overflow-y-auto space-y-8 bg-[#f5f7fa] p-4 transition-all duration-700 sm:p-6 lg:p-8">
       {/* Official Page Header */}
       <div className="flex flex-col gap-4 border-b-2 border-navy/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div>

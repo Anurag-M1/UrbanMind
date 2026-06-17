@@ -96,7 +96,8 @@ async def simulation_loop(
 
                 await state_manager.append_wait_time(intersection.id, wait_time)
                 await state_manager.update_density(
-                    intersection.id, ew, ns, queue_ew, queue_ns, wait_time
+                    intersection.id, ew, ns, queue_ew, queue_ns, wait_time,
+                    ew_phase_seconds=phase_elapsed
                 )
                 await state_manager.set_ew_green(
                     intersection.id, intersection.ew_green

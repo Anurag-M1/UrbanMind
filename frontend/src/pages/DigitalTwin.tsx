@@ -45,7 +45,7 @@ export default function DigitalTwin() {
   const selectedDetails = intersections.find((intersection) => intersection.id === selectedIntersection) ?? hotspots[0];
 
   return (
-    <div className="flex min-h-full w-full flex-col overflow-y-auto bg-[#f5f7fa] p-4 animate-in fade-in duration-700 sm:p-6 lg:p-8">
+    <div className="flex h-full w-full flex-col overflow-y-auto bg-[#f5f7fa] p-4 animate-in fade-in duration-700 sm:p-6 lg:p-8">
       <div className="mb-6 flex flex-col gap-4 border-b-2 border-navy/10 pb-6 lg:mb-8 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2">

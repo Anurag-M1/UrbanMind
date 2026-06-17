@@ -89,20 +89,24 @@ class StateManager:
         queue_ew: float,
         queue_ns: float,
         wait_time: float,
+        ew_phase_seconds: Optional[float] = None,
     ) -> None:
         if not self.redis:
             return
         now = datetime.utcnow().isoformat()
+        mapping = {
+            "density_ew": str(ew),
+            "density_ns": str(ns),
+            "queue_ew_meters": str(round(queue_ew, 1)),
+            "queue_ns_meters": str(round(queue_ns, 1)),
+            "wait_time_avg": str(round(wait_time, 2)),
+            "last_updated": now,
+        }
+        if ew_phase_seconds is not None:
+            mapping["ew_phase_seconds"] = str(round(ew_phase_seconds, 2))
         await self.redis.hset(
             f"int:{int_id}",
-            mapping={
-                "density_ew": str(ew),
-                "density_ns": str(ns),
-                "queue_ew_meters": str(round(queue_ew, 1)),
-                "queue_ns_meters": str(round(queue_ns, 1)),
-                "wait_time_avg": str(round(wait_time, 2)),
-                "last_updated": now,
-            },
+            mapping=mapping,
         )
 
     async def append_wait_time(self, int_id: str, wait_seconds: float) -> None:

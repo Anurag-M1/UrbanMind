@@ -63,7 +63,7 @@ function SettingRow({
 
 export default function Settings() {
   return (
-    <div className="min-h-full overflow-y-auto bg-[#f5f7fa] p-4 animate-in fade-in duration-700 sm:p-6 lg:p-8">
+    <div className="h-full overflow-y-auto bg-[#f5f7fa] p-4 animate-in fade-in duration-700 sm:p-6 lg:p-8">
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-8 pb-16">
         <div className="flex flex-col gap-4 border-b-2 border-navy/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
